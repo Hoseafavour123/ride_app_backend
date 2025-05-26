@@ -14,6 +14,7 @@ export interface IUser extends Document {
   email: string
   password?: string
   role: UserRole
+  birthDate?: Date
   refreshToken?: string
   comparePassword: (password: string) => Promise<boolean>;
   omitPassword: () => Omit<IUser, 'password'>;
@@ -25,6 +26,7 @@ const UserSchema = new mongoose.Schema<IUser>(
     phone: { type: String },
     email: { type: String, required: true, unique: true },
     password: { type: String },
+    birthDate: { type: Date, required: false },
     role: {
       type: String,
       enum: Object.values(UserRole),

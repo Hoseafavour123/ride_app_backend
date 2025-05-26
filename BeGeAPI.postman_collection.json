@@ -1,0 +1,228 @@
+{
+  "info": {
+    "name": "RideHailing API",
+    "_postman_id": "12345678-ride-hailing-collection",
+    "description": "Postman collection for testing RideHailing backend API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Phone - Request OTP",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"phone\": \"+2348100000000\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/request-phone-verification",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "request-phone-verification"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Phone - Verify OTP",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"phone\": \"+2348100000000\",\n  \"code\": \"1234\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/verify-phone-code",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "verify-phone-code"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Auth - Register",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"phone\": \"+2348100000000\",\n  \"email\": \"user@example.com\",\n  \"password\": \"securepass\",\n  \"role\": \"DRIVER\",\n  \"useCookies\": false\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Auth - Login (email or phone)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"emailOrPhone\": \"user@example.com\",\n  \"password\": \"securepass\",\n  \"useCookies\": false\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Auth - Google Sign-In",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"idToken\": \"your_google_id_token\",\n  \"role\": \"passenger\",\n  \"useCookies\": false\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/google",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "google"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Auth - Facebook Sign-In",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"accessToken\": \"your_facebook_access_token\",\n  \"role\": \"passenger\",\n  \"useCookies\": false\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/facebook",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "facebook"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Auth - Refresh Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refreshToken\": \"your_refresh_token\",\n  \"useCookies\": false\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/refresh",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "refresh"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Auth - Logout",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/auth/logout",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "logout"
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api/v1"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    }
+  ]
+}

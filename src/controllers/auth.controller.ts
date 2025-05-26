@@ -3,8 +3,11 @@ import SessionModel from '../models/session.model'
 import {
   createAccount,
   loginUser,
+  loginWithFacebook,
   loginWithGoogle,
   refreshUserAccessToken,
+  requestPhoneVerification,
+  verifyPhoneCode
 } from '../services/auth.service'
 import appAssert from '../utils/appAssert'
 import {
@@ -13,12 +16,42 @@ import {
 } from '../utils/cookies'
 import { verifyToken } from '../utils/jwt'
 import catchErrors from '../utils/catchErrors'
-import { loginSchema, registerSchema, googleAuthSchema } from './auth.schemas'
+import { loginSchema, registerSchema, googleAuthSchema, facebookAuthSchema, phoneRequestSchema, phoneVerifySchema } from './auth.schemas'
 import Audience from '../constants/audience'
 
-// Register
+
+
+
+
+export const requestPhoneCodeHandler = catchErrors(async (req, res) => {
+  const { phone } = phoneRequestSchema.parse(req.body)
+
+  const result = await requestPhoneVerification(phone)
+
+  return res.status(200).json({
+    status: 'success',
+    data: {
+      phone: result.phone,
+      expiresAt: result.expiresAt,
+      message: 'Verification code sent',
+    },
+  })
+})
+
+export const verifyPhoneCodeHandler = catchErrors(async (req, res) => {
+  const { phone, code } = phoneVerifySchema.parse(req.body)
+
+  const result = await verifyPhoneCode(phone, code)
+
+  return res.status(200).json({
+    status: 'success',
+    message: 'Phone verified',
+    data: result,
+  })
+})
+
+
 export const registerHandler = catchErrors(async (req, res) => {
-  console.log("INSIDE REG")
   const request = registerSchema.parse({
     ...req.body,
     userAgent: req.headers['user-agent'],
@@ -28,7 +61,7 @@ export const registerHandler = catchErrors(async (req, res) => {
   const useCookies = req.body.useCookies ?? false
 
   // Set tokens nd respond with user data
-  return setAuthTokens({ res, accessToken, refreshToken, useCookies })
+  setAuthTokens({ res, accessToken, refreshToken, useCookies })
 
   return res.status(CREATED).json({
     status: 'success',
@@ -118,6 +151,27 @@ export const googleAuthHandler = catchErrors(async (req, res) => {
   const useCookies = req.body.useCookies ?? false
 
   setAuthTokens({ res, accessToken, refreshToken, useCookies })
+
+  return res.status(OK).json({
+    status: 'success',
+    data: {
+      user,
+    },
+  })
+})
+
+// Facebook Sign-In
+
+export const facebookAuthHandler = catchErrors(async (req, res) => {
+  const request = facebookAuthSchema.parse({
+    ...req.body,
+    userAgent: req.headers["user-agent"],
+  });
+
+  const { user, accessToken, refreshToken } = await loginWithFacebook(request);
+  const useCookies = req.body.useCookies ?? false;
+
+  setAuthTokens({ res, accessToken, refreshToken, useCookies });
 
   return res.status(OK).json({
     status: 'success',

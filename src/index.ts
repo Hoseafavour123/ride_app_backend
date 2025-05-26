@@ -8,10 +8,11 @@ import {authenticate} from "./middleware/authenticate";
 import authRoutes from "./routes/auth.route";
 import userRoutes from "./routes/user.route";
 import sessionRoutes from "./routes/session.route";
+import swaggerRouter from './routes/swagger.route'
+
 
 const app = express();
 
-// add middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -23,13 +24,14 @@ app.use(
 );
 app.use(cookieParser());
 
-// health check
 app.get("/", (_, res) => {
   return res.status(200).json({
     status: "healthy",
   });
 });
 
+// swagger docs
+app.use('/docs', swaggerRouter)
 
 
 // auth routes
@@ -45,7 +47,7 @@ app.use("/api/v1/sessions", authenticate, sessionRoutes);
 // error handler
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5005;
+const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || "development";
 
 app.listen(PORT, async () => {

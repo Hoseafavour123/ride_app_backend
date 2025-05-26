@@ -13,7 +13,13 @@ import {
   verifyToken,
 } from '../utils/jwt'
 
+import PhoneSessionModel from '../models/phoneSession.model'
+import { randomInt } from 'crypto'
+import { addMinutes } from 'date-fns'
+
 import { OAuth2Client } from 'google-auth-library'
+import axios from 'axios'
+import { sendSMS } from '../utils/sendSMS'
 
 // ========== TYPES ==========
 
@@ -23,14 +29,16 @@ type CreateAccountParams = {
   password: string
   role: string
   phone?:string
+  birthDate?: Date
   userAgent?: string
 }
 
 type LoginParams = {
-  email: string
+  emailOrPhone: string
   password: string
   userAgent?: string
 }
+
 
 type GoogleLoginParams = {
   idToken: string
@@ -38,34 +46,80 @@ type GoogleLoginParams = {
   userAgent?: string
 }
 
+
+// ========== PHONE SIGNUP ==========
+export const requestPhoneVerification = async (phone: string) => {
+  const code = randomInt(1000, 999999).toString()
+  const expiresAt = addMinutes(new Date(), 10)
+
+  await PhoneSessionModel.findOneAndUpdate(
+    { phone },
+    { phone, code, expiresAt, verified: false },
+    { upsert: true, new: true }
+  )
+
+  const message = `🔐 Your verification code is: ${code}`
+
+  await sendSMS(phone, message)
+
+  return { phone, expiresAt }
+}
+
+export const verifyPhoneCode = async (phone: string, code: string) => {
+  const session = await PhoneSessionModel.findOne({ phone })
+  appAssert(session, 400, 'Phone not found')
+  appAssert(session.code === code, 400, 'Invalid code')
+  appAssert(session.expiresAt > new Date(), 400, 'Code expired')
+
+  session.verified = true
+  await session.save()
+
+  return { verified: true }
+}
+
+export const isPhoneVerified = async (phone: string) => {
+  const session = await PhoneSessionModel.findOne({ phone })
+  return session?.verified === true
+}
+
+
 // ========== LOCAL SIGNUP ==========
 export const createAccount = async ({
   fullName,
   email,
   password,
+  phone,
   role,
+  birthDate,
   userAgent,
 }: CreateAccountParams) => {
+  appAssert(phone, 400, 'Phone number is required')
+  const verified = await isPhoneVerified(phone)
+  appAssert(verified, 401, 'Phone number not verified')
+
+
   const existingUser = await UserModel.exists({ email })
   appAssert(!existingUser, CONFLICT, 'Email already in use')
 
   const hashedPassword = await hashValue(password)
-  const user = await UserModel.create({fullName, email, password: hashedPassword, role })
+  const user = await UserModel.create({fullName, email, password: hashedPassword, role, birthDate })
 
   return issueTokens(user, userAgent)
 }
 
 // ========== LOCAL LOGIN ==========
 export const loginUser = async ({
-  email,
+  emailOrPhone,
   password,
   userAgent,
 }: LoginParams) => {
-  const user = await UserModel.findOne({ email })
-  appAssert(user, UNAUTHORIZED, 'Invalid email or password')
+  const user = await UserModel.findOne({
+    $or: [{ email: emailOrPhone.toLowerCase() }, { phone: emailOrPhone }],
+  })
 
+  appAssert(user, 401, 'Invalid credentials')
   const isValid = await user.comparePassword(password)
-  appAssert(isValid, UNAUTHORIZED, 'Invalid email or password')
+  appAssert(isValid, UNAUTHORIZED, 'Invalid credentials')
 
   return issueTokens(user, userAgent)
 }
@@ -94,12 +148,45 @@ export const loginWithGoogle = async ({
       email: payload.email,
       fullName: payload.name || 'Unnamed User',
       role,
-      password: Math.random().toString(36).slice(-10), // dummy password
+      password: Math.random().toString(36).slice(-10),
     })
   }
 
   return issueTokens(user, userAgent)
 }
+
+//  ========== FACEBOOK SIGNIN ==============
+
+type FacebookLoginParams = {
+  accessToken: string;
+  role?: UserRole;
+  userAgent?: string;
+};
+
+export const loginWithFacebook = async ({ accessToken, role, userAgent }: FacebookLoginParams) => {
+  const fbResponse = await axios.get(
+    `https://graph.facebook.com/me?fields=id,name,email&access_token=${accessToken}`
+  );
+
+  const profile = fbResponse.data;
+  appAssert(profile?.email, 401, "Facebook account must have a verified email");
+
+  let user = await UserModel.findOne({ email: profile.email });
+
+  if (!user) {
+    appAssert(role, 409, "New users must provide a role");
+
+    user = await UserModel.create({
+      email: profile.email,
+      fullName: profile.name || "Facebook User",
+      password: Math.random().toString(36).slice(-10),
+      role,
+    });
+  }
+
+  return issueTokens(user, userAgent);
+};
+
 
 // ========== REFRESH TOKEN ==========
 export const refreshUserAccessToken = async (refreshToken: string) => {
