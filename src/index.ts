@@ -47,7 +47,7 @@ app.use("/api/v1/sessions", authenticate, sessionRoutes);
 // error handler
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5007;
+const PORT = process.env.PORT || 7000;
 const NODE_ENV = process.env.NODE_ENV || "development";
 
 app.listen(PORT, async () => {
