@@ -28,7 +28,7 @@ type CreateAccountParams = {
   email: string
   password: string
   role: string
-  phone?:string
+  phone?: string
   birthDate?: Date
   userAgent?: string
 }
@@ -39,13 +39,11 @@ type LoginParams = {
   userAgent?: string
 }
 
-
 type GoogleLoginParams = {
   idToken: string
   role?: UserRole
   userAgent?: string
 }
-
 
 // ========== PHONE SIGNUP ==========
 export const requestPhoneVerification = async (phone: string) => {
@@ -82,7 +80,6 @@ export const isPhoneVerified = async (phone: string) => {
   return session?.verified === true
 }
 
-
 // ========== LOCAL SIGNUP ==========
 export const createAccount = async ({
   fullName,
@@ -97,12 +94,17 @@ export const createAccount = async ({
   const verified = await isPhoneVerified(phone)
   appAssert(verified, 401, 'Phone number not verified')
 
-
   const existingUser = await UserModel.exists({ email })
   appAssert(!existingUser, CONFLICT, 'Email already in use')
 
   const hashedPassword = await hashValue(password)
-  const user = await UserModel.create({fullName, email, password: hashedPassword, role, birthDate })
+  const user = await UserModel.create({
+    fullName,
+    email,
+    password: hashedPassword,
+    role,
+    birthDate,
+  })
 
   return issueTokens(user, userAgent)
 }
@@ -137,6 +139,7 @@ export const loginWithGoogle = async ({
   })
 
   const payload = ticket.getPayload()
+  appAssert(payload, UNAUTHORIZED, 'Invalid Google token')
   appAssert(payload?.email, UNAUTHORIZED, 'Invalid Google token')
 
   let user = await UserModel.findOne({ email: payload.email })
@@ -158,35 +161,38 @@ export const loginWithGoogle = async ({
 //  ========== FACEBOOK SIGNIN ==============
 
 type FacebookLoginParams = {
-  accessToken: string;
-  role?: UserRole;
-  userAgent?: string;
-};
+  accessToken: string
+  role?: UserRole
+  userAgent?: string
+}
 
-export const loginWithFacebook = async ({ accessToken, role, userAgent }: FacebookLoginParams) => {
+export const loginWithFacebook = async ({
+  accessToken,
+  role,
+  userAgent,
+}: FacebookLoginParams) => {
   const fbResponse = await axios.get(
     `https://graph.facebook.com/me?fields=id,name,email&access_token=${accessToken}`
-  );
+  )
 
-  const profile = fbResponse.data;
-  appAssert(profile?.email, 401, "Facebook account must have a verified email");
+  const profile = fbResponse.data
+  appAssert(profile?.email, 401, 'Facebook account must have a verified email')
 
-  let user = await UserModel.findOne({ email: profile.email });
+  let user = await UserModel.findOne({ email: profile.email })
 
   if (!user) {
-    appAssert(role, 409, "New users must provide a role");
+    appAssert(role, 409, 'New users must provide a role')
 
     user = await UserModel.create({
       email: profile.email,
-      fullName: profile.name || "Facebook User",
+      fullName: profile.name || 'Facebook User',
       password: Math.random().toString(36).slice(-10),
       role,
-    });
+    })
   }
 
-  return issueTokens(user, userAgent);
-};
-
+  return issueTokens(user, userAgent)
+}
 
 // ========== REFRESH TOKEN ==========
 export const refreshUserAccessToken = async (refreshToken: string) => {

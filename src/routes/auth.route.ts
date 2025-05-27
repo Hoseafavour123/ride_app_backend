@@ -130,28 +130,34 @@ authRoutes.post('/facebook', facebookAuthHandler)
  *         application/json:
  *           schema:
  *             type: object
- *             required: [fullName, phone, email, password, confirmPassword, role]
+ *             required:
+ *               - phone
+ *               - email
+ *               - fullName
+ *               - password
+ *               - confirmPassword
+ *               - role
  *             properties:
- *
-  *              fullName:
-  *               type: string
  *               phone:
  *                 type: string
  *               email:
  *                 type: string
+ *               fullName:
+ *                 type: string
  *               password:
  *                 type: string
- *              confirmPassword:
- *                type: string
+ *               confirmPassword:
+ *                 type: string
  *               role:
  *                 type: string
- *                 enum: [admin, driver, passenger]
+ *                 enum: [ADMIN, DRIVER, PASSENGER]
  *               useCookies:
  *                 type: boolean
  *     responses:
  *       201:
  *         description: User registered
  */
+
 authRoutes.post('/register', registerHandler)
 
 /**
