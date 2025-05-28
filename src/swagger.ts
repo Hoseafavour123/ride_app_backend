@@ -10,6 +10,6 @@ export const swaggerSpec = swaggerJSDoc({
     },
     servers: [{ url: 'https://bege-api.onrender.com/api/v1' }],
   },
-  apis: ['../dist/routes/**/*.js', '../dist/controllers/**/*.js',
+  apis: ['./dist/routes/**/*.js', './dist/controllers/**/*.js',
   ],
 })
