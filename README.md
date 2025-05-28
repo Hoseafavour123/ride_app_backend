@@ -54,7 +54,7 @@ Phone verification is required before registration:
 
 Visit the Swagger UI to interact with and test all available endpoints on your PC:
 
- [http://localhost:5000/docs](http://localhost:5000/docs)
+ [https://bege-api.onrender.com/docs](https://bege-api.onrender.com/docs)
 
 ---
 
@@ -84,6 +84,7 @@ This token is generated using the Google Sign-In SDK (React Native, Flutter, etc
     ```
 5. Authorize and exchange code.
 6. Copy the `id_token` from the response.
+
 
 **Use it in Postman:**
 ```json

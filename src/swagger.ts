@@ -8,7 +8,18 @@ export const swaggerSpec = swaggerJSDoc({
       title: 'BeGe API',
       version: '1.0.0',
     },
+
     servers: [{ url: 'https://bege-api.onrender.com/api/v1' }],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }],
   },
   apis: ['./dist/routes/**/*.js', './dist/controllers/**/*.js',
   ],

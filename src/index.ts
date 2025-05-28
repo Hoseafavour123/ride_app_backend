@@ -30,6 +30,7 @@ app.get("/", (_, res) => {
   });
 });
 
+
 // swagger docs
 app.use('/docs', swaggerRouter)
 
