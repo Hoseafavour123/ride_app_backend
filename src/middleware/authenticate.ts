@@ -6,6 +6,7 @@ export const authenticate = (audience: Audience) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization
 
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res
         .status(401)

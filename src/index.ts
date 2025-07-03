@@ -8,7 +8,11 @@ import {authenticate} from "./middleware/authenticate";
 import authRoutes from "./routes/auth.route";
 import userRoutes from "./routes/user.route";
 import sessionRoutes from "./routes/session.route";
-import swaggerRouter from './routes/swagger.route'
+import swaggerRouter from './routes/swagger.route';
+import rideRoutes from './routes/ride.route'
+import driverRoutes from './routes/driver.route'
+import matchingRoutes from './routes/matching.route'
+import Audience from "./constants/audience";
 
 
 const app = express();
@@ -24,6 +28,7 @@ app.use(
 );
 app.use(cookieParser());
 
+
 app.get("/", (_, res) => {
   return res.status(200).json({
     status: "healthy",
@@ -34,18 +39,20 @@ app.get("/", (_, res) => {
 // swagger docs
 app.use('/docs', swaggerRouter)
 
-
 // auth routes
 app.use("/api/v1/auth", authRoutes);
 
-
-// protected routes
+// user and session routes
 app.use("/api/v1/user", authenticate, userRoutes);
 app.use("/api/v1/sessions", authenticate, sessionRoutes);
 
+// passenger routes
+app.use("/api/v1/ride", authenticate(Audience.User), rideRoutes)
+app.use("/api/v1/matching", authenticate(Audience.User), matchingRoutes)
 
+// driver routes
+app.use("/api/v1/driver", authenticate(Audience.User), driverRoutes)
 
-// error handler
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;

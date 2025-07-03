@@ -14,6 +14,8 @@ export interface IUser extends Document {
   email: string
   password?: string
   role: UserRole
+  vehicle?: string
+  rating?: number
   birthDate?: Date
   refreshToken?: string
   comparePassword: (password: string) => Promise<boolean>;
@@ -32,6 +34,8 @@ const UserSchema = new mongoose.Schema<IUser>(
       enum: Object.values(UserRole),
       default: UserRole.PASSENGER,
     },
+    vehicle: { type: String },
+    rating: { type: Number, default: 0 },
     refreshToken: { type: String },
   },
   { timestamps: true }
