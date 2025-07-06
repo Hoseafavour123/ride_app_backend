@@ -14,4 +14,4 @@ router.get(
 router.get('/passenger', getPassengerRidesHandler)
 
 
-export default router
+export default  router

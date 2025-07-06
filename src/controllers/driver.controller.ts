@@ -5,6 +5,10 @@ import { OK } from '../constants/http'
 import { Availability } from '../models/driverStatus.model'
 import { acceptRideOffer, rejectRideOffer } from '../services/driver.service'
 
+
+
+// ==================== RIDES ==========================================
+
 export const updateDriverLocationHandler = catchErrors(async (req, res) => {
   const driverId = req.user?.id.toString()
   const payload = updateDriverStatusSchema.parse(req.body)

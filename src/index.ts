@@ -12,7 +12,12 @@ import swaggerRouter from './routes/swagger.route';
 import rideRoutes from './routes/ride.route'
 import driverRoutes from './routes/driver.route'
 import matchingRoutes from './routes/matching.route'
+import deliveryRoutes from './routes/deliveries.route'
+import fareRoutes from "./routes/fare.route";
+import dashcamRoutes from './routes/dashcam.route'
+import sosRoutes from "./routes/sos.route";
 import Audience from "./constants/audience";
+import internalAlertRoutes from "./routes/internal_alert";
 
 
 const app = express();
@@ -53,10 +58,28 @@ app.use("/api/v1/matching", authenticate(Audience.User), matchingRoutes)
 // driver routes
 app.use("/api/v1/driver", authenticate(Audience.User), driverRoutes)
 
+// delivery routes
+app.use("/api/v1/deliveries", authenticate(Audience.User), deliveryRoutes)
+
+// fare routes
+app.use("/api/v1/fare", fareRoutes)
+
+// dashcam routes
+app.use("/api/v1/dashcam", authenticate(Audience.User), dashcamRoutes)
+
+
+// sos routes
+app.use("/api/v1/sos", authenticate(Audience.User), sosRoutes)
+
+
+app.use("/api/v1/internal-alert", internalAlertRoutes)
+
+
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || "development";
+
 
 app.listen(PORT, async () => {
   console.log(`Server listening on port ${PORT} in ${NODE_ENV} environment`);

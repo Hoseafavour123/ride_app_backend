@@ -3,7 +3,9 @@ import { CONFLICT, FORBIDDEN, NOT_FOUND, UNAUTHORIZED } from '../constants/http'
 import RideModel, { RideStatus } from '../models/ride.model'
 import RideOfferModel, { RideOfferStatus } from '../models/rideOffer.model'
 import appAssert from '../utils/appAssert'
+import DeliveryModel, { DeliveryStatus } from '../models/delivery.model'
 
+// ==================== RIDES ===================================
 
 
 export const updateDriverStatus = async ({
@@ -172,4 +174,3 @@ export const completeRide = async ({
   // TODO: Stub fare calculation
   return ride
 }
-  

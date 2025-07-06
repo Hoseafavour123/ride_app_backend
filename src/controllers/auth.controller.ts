@@ -20,9 +20,6 @@ import { loginSchema, registerSchema, googleAuthSchema, facebookAuthSchema, phon
 import Audience from '../constants/audience'
 
 
-
-
-
 export const requestPhoneCodeHandler = catchErrors(async (req, res) => {
   const { phone } = phoneRequestSchema.parse(req.body)
 

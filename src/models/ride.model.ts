@@ -25,6 +25,7 @@ export interface RideDocument extends Document {
   updatedAt: Date
   startedAt?: Date
   completedAt?: Date
+ 
 }
 
 const rideSchema = new Schema<RideDocument>(
@@ -57,6 +58,7 @@ const rideSchema = new Schema<RideDocument>(
     },
     startedAt: { type: Date },
     completedAt: { type: Date },
+    
   },
   {
     timestamps: true,

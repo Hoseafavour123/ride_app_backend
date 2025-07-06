@@ -1,8 +1,9 @@
 import { RideDocument } from '../models/ride.model'
+import { DeliveryDocument } from '../models/delivery.model'
 
 export const notifyDriver = async (
   driverId: string,
-  ride: RideDocument
+  ride: RideDocument | DeliveryDocument
 ): Promise<void> => {
   // Plug in your notification service here:
   // Options:

@@ -12,6 +12,7 @@ export interface RideOfferDocument extends Document {
   driverId: mongoose.Types.ObjectId
   status: RideOfferStatus
   createdAt: Date
+  deliveryId?: mongoose.Types.ObjectId // Optional reference to a delivery if this ride offer is for a delivery
 }
 
 const rideOfferSchema = new Schema<RideOfferDocument>(
@@ -23,11 +24,19 @@ const rideOfferSchema = new Schema<RideOfferDocument>(
       enum: Object.values(RideOfferStatus),
       default: RideOfferStatus.SENT,
     },
+    deliveryId: { type: Schema.Types.ObjectId, ref: 'Delivery' }, 
   },
   { timestamps: true }
 )
 
-rideOfferSchema.index({ rideId: 1, driverId: 1 }, { unique: true })
+rideOfferSchema.index(
+  { rideId: 1, driverId: 1 },
+  { unique: true, sparse: true }
+)
+rideOfferSchema.index(
+  { deliveryId: 1, driverId: 1 },
+  { unique: true, sparse: true }
+)
 
 const RideOfferModel = mongoose.model<RideOfferDocument>(
   'RideOffer',
