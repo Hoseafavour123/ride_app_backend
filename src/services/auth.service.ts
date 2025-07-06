@@ -56,11 +56,12 @@ export const requestPhoneVerification = async (phone: string) => {
     { upsert: true, new: true }
   )
 
-  const message = `🔐 Your verification code is: ${code}`
+  //const message = `🔐 Your verification code is: ${code}`
 
-  await sendSMS(phone, message)
 
-  return { phone, expiresAt }
+  //await sendSMS(phone, message)
+
+  return { phone, expiresAt, code }
 }
 
 export const verifyPhoneCode = async (phone: string, code: string) => {

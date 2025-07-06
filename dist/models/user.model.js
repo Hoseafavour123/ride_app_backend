@@ -23,6 +23,8 @@ const UserSchema = new mongoose_1.default.Schema({
         enum: Object.values(UserRole),
         default: UserRole.PASSENGER,
     },
+    vehicle: { type: String },
+    rating: { type: Number, default: 0 },
     refreshToken: { type: String },
 }, { timestamps: true });
 UserSchema.pre("save", async function (next) {

@@ -18,9 +18,10 @@ import dashcamRoutes from './routes/dashcam.route'
 import sosRoutes from "./routes/sos.route";
 import Audience from "./constants/audience";
 import internalAlertRoutes from "./routes/internal_alert";
-
+import reviewRoutes from "./routes/review.route";
 
 const app = express();
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -74,6 +75,8 @@ app.use("/api/v1/sos", authenticate(Audience.User), sosRoutes)
 
 app.use("/api/v1/internal-alert", internalAlertRoutes)
 
+// review routes
+app.use("/api/v1/review", authenticate(Audience.User), reviewRoutes)
 
 app.use(errorHandler);
 

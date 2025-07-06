@@ -19,7 +19,7 @@ export type AccessTokenPayload = {
 type SignOptionsWithSecret = SignOptions & { secret: string }
 
 const defaultAccessTokenOptions: SignOptionsWithSecret = {
-  expiresIn: '15m',
+  expiresIn: '59m',
   secret: process.env.JWT_SECRET as string,
 }
 

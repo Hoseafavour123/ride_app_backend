@@ -1,6 +1,8 @@
 
 import swaggerJSDoc from 'swagger-jsdoc'
 
+const url = process.env.NODE_ENV === 'production' ? 'https://bege-api.onrender.com/api/v1' : 'http://localhost:5000/api/v1'
+
 export const swaggerSpec = swaggerJSDoc({
   definition: {
     openapi: '3.0.0',
@@ -9,7 +11,7 @@ export const swaggerSpec = swaggerJSDoc({
       version: '1.0.0',
     },
 
-    servers: [{ url: 'https://bege-api.onrender.com/api/v1' }],
+    servers: [{ url }],
     components: {
       securitySchemes: {
         bearerAuth: {

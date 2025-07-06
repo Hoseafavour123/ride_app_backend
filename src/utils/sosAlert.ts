@@ -17,7 +17,7 @@ export const sendEmergencyWebhook = async (sos: SOSDocument) => {
     },
     rideId: sos.rideId,
     deliveryId: sos.deliveryId,
-    location: sos.location.coordinates,
+    location: { coordinates: sos.location.coordinates, address: sos.location.address || 'Not provided' },
     note: sos.note,
     status: sos.status,
   }

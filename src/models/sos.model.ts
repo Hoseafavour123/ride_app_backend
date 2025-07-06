@@ -5,7 +5,8 @@ export interface SOSDocument extends Document {
   role: 'PASSENGER' | 'DRIVER'
   location: {
     type: 'Point'
-    coordinates: [number, number] // [lng, lat]
+    coordinates: [number, number], // [lng, lat]
+    address?: string // Optional field for address
   }
   rideId?: mongoose.Types.ObjectId
   deliveryId?: mongoose.Types.ObjectId
