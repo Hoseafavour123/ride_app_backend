@@ -8,7 +8,7 @@ export enum RideOfferStatus {
 }
 
 export interface RideOfferDocument extends Document {
-  rideId: mongoose.Types.ObjectId
+  rideId?: mongoose.Types.ObjectId
   driverId: mongoose.Types.ObjectId
   status: RideOfferStatus
   createdAt: Date
@@ -17,7 +17,7 @@ export interface RideOfferDocument extends Document {
 
 const rideOfferSchema = new Schema<RideOfferDocument>(
   {
-    rideId: { type: Schema.Types.ObjectId, ref: 'Ride', required: true },
+    rideId: { type: Schema.Types.ObjectId, ref: 'Ride' },
     driverId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     status: {
       type: String,
@@ -30,12 +30,11 @@ const rideOfferSchema = new Schema<RideOfferDocument>(
 )
 
 rideOfferSchema.index(
-  { rideId: 1, driverId: 1 },
-  { unique: true, sparse: true }
-)
-rideOfferSchema.index(
   { deliveryId: 1, driverId: 1 },
-  { unique: true, sparse: true }
+  {
+    unique: true,
+    partialFilterExpression: { deliveryId: { $type: 'objectId' } },
+  }
 )
 
 const RideOfferModel = mongoose.model<RideOfferDocument>(

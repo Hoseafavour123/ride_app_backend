@@ -51,7 +51,7 @@ app.use("/api/v1/matching", (0, authenticate_1.authenticate)(audience_1.default.
 // driver routes
 app.use("/api/v1/driver", (0, authenticate_1.authenticate)(audience_1.default.User), driver_route_1.default);
 // delivery routes
-app.use("/api/v1/deliveries", (0, authenticate_1.authenticate)(audience_1.default.User), deliveries_route_1.default);
+app.use("/api/v1/delivery", (0, authenticate_1.authenticate)(audience_1.default.User), deliveries_route_1.default);
 // fare routes
 app.use("/api/v1/fare", fare_route_1.default);
 // dashcam routes

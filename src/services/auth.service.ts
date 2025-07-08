@@ -47,7 +47,7 @@ type GoogleLoginParams = {
 
 // ========== PHONE SIGNUP ==========
 export const requestPhoneVerification = async (phone: string) => {
-  const code = randomInt(1000, 999999).toString()
+  const code = randomInt(0, 1000000).toString().padStart(6, '0')
   const expiresAt = addMinutes(new Date(), 10)
 
   await PhoneSessionModel.findOneAndUpdate(
@@ -57,11 +57,12 @@ export const requestPhoneVerification = async (phone: string) => {
   )
 
   //const message = `🔐 Your verification code is: ${code}`
+  console.log(`Your verification code is: ${code}`)
 
 
   //await sendSMS(phone, message)
 
-  return { phone, expiresAt, code }
+  return { phone, expiresAt }
 }
 
 export const verifyPhoneCode = async (phone: string, code: string) => {
@@ -94,21 +95,23 @@ export const createAccount = async ({
   appAssert(phone, 400, 'Phone number is required')
   const verified = await isPhoneVerified(phone)
   appAssert(verified, 401, 'Phone number not verified')
-
   const existingUser = await UserModel.exists({ email })
   appAssert(!existingUser, CONFLICT, 'Email already in use')
 
-  const hashedPassword = await hashValue(password)
-  const user = await UserModel.create({
+  const user = new UserModel({
     fullName,
     email,
-    password: hashedPassword,
+    password,
     role,
     birthDate,
+    phone,
   })
+
+  await user.save()
 
   return issueTokens(user, userAgent)
 }
+
 
 // ========== LOCAL LOGIN ==========
 export const loginUser = async ({
@@ -116,12 +119,17 @@ export const loginUser = async ({
   password,
   userAgent,
 }: LoginParams) => {
+  
   const user = await UserModel.findOne({
-    $or: [{ email: emailOrPhone.toLowerCase() }, { phone: emailOrPhone }],
+    $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
   })
+
+  console.log("User response", user)
 
   appAssert(user, 401, 'Invalid credentials')
   const isValid = await user.comparePassword(password)
+
+  console.log("Is valid", isValid)
   appAssert(isValid, UNAUTHORIZED, 'Invalid credentials')
 
   return issueTokens(user, userAgent)

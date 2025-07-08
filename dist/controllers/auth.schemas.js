@@ -10,7 +10,7 @@ exports.phoneRequestSchema = zod_1.z.object({
 });
 exports.phoneVerifySchema = zod_1.z.object({
     phone: zod_1.z.string().min(10),
-    code: zod_1.z.string().length(4),
+    code: zod_1.z.string().length(6),
 });
 exports.googleAuthSchema = zod_1.z.object({
     idToken: zod_1.z.string().min(10, 'Invalid Google ID token'),

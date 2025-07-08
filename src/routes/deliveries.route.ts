@@ -20,19 +20,68 @@ const deliveryRoutes = Router()
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - pickup
+ *               - dropoff
+ *               - packageType
+ *               - receiverName
+ *               - receiverPhone
  *             properties:
  *               pickup:
  *                 type: object
- *                 example: { coordinates: [3.4213, 6.4474] }
- *               destination:
+ *                 required:
+ *                   - address
+ *                   - coordinates
+ *                 properties:
+ *                   address:
+ *                     type: string
+ *                     example: "Lagos Terminal"
+ *                   coordinates:
+ *                     type: array
+ *                     items:
+ *                       type: number
+ *                     minItems: 2
+ *                     maxItems: 2
+ *                     example: [3.465, 6.4474]
+ *               dropoff:
  *                 type: object
- *                 example: { coordinates: [3.4299, 6.4602] }
+ *                 required:
+ *                   - address
+ *                   - coordinates
+ *                 properties:
+ *                   address:
+ *                     type: string
+ *                     example: "Lekki Phase"
+ *                   coordinates:
+ *                     type: array
+ *                     items:
+ *                       type: number
+ *                     minItems: 2
+ *                     maxItems: 2
+ *                     example: [3.4299, 6.4602]
  *               packageType:
  *                 type: string
- *                 example: "small_box"
+ *                 example: "document"
+ *               receiverName:
+ *                 type: string
+ *                 example: "John Doe"
+ *               receiverPhone:
+ *                 type: string
+ *                 example: "+2348123456789"
+ *               rideType:
+ *                 type: string
+ *                 enum: [standard, express, bike]
+ *                 example: "standard"
+ *               fareEstimate:
+ *                 type: number
+ *                 example: 1500
  *     responses:
  *       201:
- *         description: Delivery request created
+ *         description: Delivery request created successfully
+ *       400:
+ *         description: Invalid input data
+ *       401:
+ *         description: Unauthorized
  */
 deliveryRoutes.post('/', bookDeliveryHandler)
 

@@ -12,7 +12,7 @@ const driverRoutes = Router()
  * @swagger
  * /driver/status:
  *   put:
- *     summary: Update driver's current GPS location
+ *     summary: Update driver's current GPS location and availability
  *     tags: [Driver]
  *     security:
  *       - bearerAuth: []
@@ -23,14 +23,21 @@ const driverRoutes = Router()
  *           schema:
  *             type: object
  *             properties:
- *               coordinates:
- *                 type: array
- *                 items:
- *                   type: number
- *                 example: [3.4213, 6.4474]
+ *               availability:
+ *                 type: string
+ *                 enum: [ONLINE, OFFLINE]
+ *                 example: ONLINE
+ *               location:
+ *                 type: object
+ *                 properties:
+ *                   coordinates:
+ *                     type: array
+ *                     items:
+ *                       type: number
+ *                     example: [3.465,6.4564]
  *     responses:
  *       200:
- *         description: Driver location updated
+ *         description: Driver location and availability updated
  */
 driverRoutes.put(
   '/status',

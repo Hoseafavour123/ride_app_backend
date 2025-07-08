@@ -27,6 +27,7 @@ const sosSchema = new Schema<SOSDocument>(
         default: 'Point',
       },
       coordinates: { type: [Number], required: true }, // [lng, lat]
+      address: { type: String, required: false }, // Optional address field
     },
     rideId: { type: Schema.Types.ObjectId, ref: 'Ride' },
     deliveryId: { type: Schema.Types.ObjectId, ref: 'Delivery' },

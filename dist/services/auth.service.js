@@ -9,7 +9,6 @@ const audience_1 = __importDefault(require("../constants/audience"));
 const session_model_1 = __importDefault(require("../models/session.model"));
 const user_model_1 = __importDefault(require("../models/user.model"));
 const appAssert_1 = __importDefault(require("../utils/appAssert"));
-const bcrypt_1 = require("../utils/bcrypt");
 const date_1 = require("../utils/date");
 const jwt_1 = require("../utils/jwt");
 const phoneSession_model_1 = __importDefault(require("../models/phoneSession.model"));
@@ -17,14 +16,14 @@ const crypto_1 = require("crypto");
 const date_fns_1 = require("date-fns");
 const google_auth_library_1 = require("google-auth-library");
 const axios_1 = __importDefault(require("axios"));
-const sendSMS_1 = require("../utils/sendSMS");
 // ========== PHONE SIGNUP ==========
 const requestPhoneVerification = async (phone) => {
-    const code = (0, crypto_1.randomInt)(1000, 999999).toString();
+    const code = (0, crypto_1.randomInt)(0, 1000000).toString().padStart(6, '0');
     const expiresAt = (0, date_fns_1.addMinutes)(new Date(), 10);
     await phoneSession_model_1.default.findOneAndUpdate({ phone }, { phone, code, expiresAt, verified: false }, { upsert: true, new: true });
-    const message = `🔐 Your verification code is: ${code}`;
-    await (0, sendSMS_1.sendSMS)(phone, message);
+    //const message = `🔐 Your verification code is: ${code}`
+    console.log(`Your verification code is: ${code}`);
+    //await sendSMS(phone, message)
     return { phone, expiresAt };
 };
 exports.requestPhoneVerification = requestPhoneVerification;
@@ -50,24 +49,27 @@ const createAccount = async ({ fullName, email, password, phone, role, birthDate
     (0, appAssert_1.default)(verified, 401, 'Phone number not verified');
     const existingUser = await user_model_1.default.exists({ email });
     (0, appAssert_1.default)(!existingUser, http_1.CONFLICT, 'Email already in use');
-    const hashedPassword = await (0, bcrypt_1.hashValue)(password);
-    const user = await user_model_1.default.create({
+    const user = new user_model_1.default({
         fullName,
         email,
-        password: hashedPassword,
+        password,
         role,
         birthDate,
+        phone,
     });
+    await user.save();
     return issueTokens(user, userAgent);
 };
 exports.createAccount = createAccount;
 // ========== LOCAL LOGIN ==========
 const loginUser = async ({ emailOrPhone, password, userAgent, }) => {
     const user = await user_model_1.default.findOne({
-        $or: [{ email: emailOrPhone.toLowerCase() }, { phone: emailOrPhone }],
+        $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
     });
+    console.log("User response", user);
     (0, appAssert_1.default)(user, 401, 'Invalid credentials');
     const isValid = await user.comparePassword(password);
+    console.log("Is valid", isValid);
     (0, appAssert_1.default)(isValid, http_1.UNAUTHORIZED, 'Invalid credentials');
     return issueTokens(user, userAgent);
 };

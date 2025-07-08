@@ -22,13 +22,37 @@ const router = Router()
  *             properties:
  *               pickup:
  *                 type: object
- *                 example: { coordinates: [3.4213, 6.4474] }
- *               destination:
+ *                 properties:
+ *                   address:
+ *                     type: string
+ *                     example: "Lagos Terminal"
+ *                   coordinates:
+ *                     type: array
+ *                     items:
+ *                       type: number
+ *                     example:[3.465, 6.428]
+ *               dropoff:
  *                 type: object
- *                 example: { coordinates: [3.4299, 6.4602] }
+ *                 properties:
+ *                   address:
+ *                     type: string
+ *                     example: "Lekki Phase"
+ *                   coordinates:
+ *                     type: array
+ *                     items:
+ *                       type: number
+ *                     example: [3.4299, 6.4602]
  *               rideType:
  *                 type: string
  *                 example: "standard"
+ *               fareEstimate:
+ *                 type: number
+ *                 example: 1500
+ *             required:
+ *               - pickup
+ *               - dropoff
+ *               - rideType
+ *               - fareEstimate
  *     responses:
  *       201:
  *         description: Ride request created successfully

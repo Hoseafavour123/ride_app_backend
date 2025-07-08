@@ -61,7 +61,7 @@ dashcamRoutes.post(
  *             properties:
  *               clipId:
  *                 type: string
- *               cloudinaryUrl:
+ *               cloudinaryPublicId:
  *                 type: string
  *     responses:
  *       200:

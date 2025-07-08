@@ -13,9 +13,8 @@ export const phoneRequestSchema = z.object({
 
 export const phoneVerifySchema = z.object({
   phone: z.string().min(10),
-  code: z.string().length(4),
+  code: z.string().length(6),
 })
-
 
 export const googleAuthSchema = z.object({
   idToken: z.string().min(10, 'Invalid Google ID token'),

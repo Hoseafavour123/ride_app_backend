@@ -60,7 +60,7 @@ app.use("/api/v1/matching", authenticate(Audience.User), matchingRoutes)
 app.use("/api/v1/driver", authenticate(Audience.User), driverRoutes)
 
 // delivery routes
-app.use("/api/v1/deliveries", authenticate(Audience.User), deliveryRoutes)
+app.use("/api/v1/delivery", authenticate(Audience.User), deliveryRoutes)
 
 // fare routes
 app.use("/api/v1/fare", fareRoutes)
@@ -76,7 +76,7 @@ app.use("/api/v1/sos", authenticate(Audience.User), sosRoutes)
 app.use("/api/v1/internal-alert", internalAlertRoutes)
 
 // review routes
-app.use("/api/v1/review", authenticate(Audience.User), reviewRoutes)
+app.use("/api/v1/reviews", authenticate(Audience.User), reviewRoutes)
 
 app.use(errorHandler);
 
