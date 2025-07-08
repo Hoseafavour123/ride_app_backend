@@ -30,7 +30,7 @@ const router = Router()
  *                     type: array
  *                     items:
  *                       type: number
- *                     example:[3.465, 6.428]
+ *                     example: [3.465, 6.428]
  *               dropoff:
  *                 type: object
  *                 properties:
