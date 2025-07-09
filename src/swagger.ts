@@ -1,7 +1,7 @@
 
 import swaggerJSDoc from 'swagger-jsdoc'
 
-const url = process.env.NODE_ENV === 'production' ? 'https://bege-api.onrender.com/api/v1' : 'http://localhost:5000/api/v1'
+const url = process.env.NODE_ENV != 'production' ? 'https://bege-api.onrender.com/api/v1' : 'http://localhost:5000/api/v1'
 
 export const swaggerSpec = swaggerJSDoc({
   definition: {
