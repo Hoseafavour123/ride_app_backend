@@ -29,6 +29,7 @@ export const requestPhoneCodeHandler = catchErrors(async (req, res) => {
     status: 'success',
     data: {
       phone: result.phone,
+      code: result.code,
       expiresAt: result.expiresAt,
       message: 'Verification code sent',
     },

@@ -62,7 +62,7 @@ export const requestPhoneVerification = async (phone: string) => {
 
   //await sendSMS(phone, message)
 
-  return { phone, expiresAt }
+  return { phone, expiresAt, code }
 }
 
 export const verifyPhoneCode = async (phone: string, code: string) => {
