@@ -44,7 +44,7 @@ export const verifyPhoneCodeHandler = catchErrors(async (req, res) => {
   return res.status(200).json({
     status: 'success',
     message: 'Phone verified',
-    data: result,
+    tokens: result.tokens,
   })
 })
 

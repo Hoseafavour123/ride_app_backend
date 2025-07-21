@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.swaggerSpec = void 0;
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
-const url = process.env.NODE_ENV === 'production' ? 'https://bege-api.onrender.com/api/v1' : 'http://localhost:5000/api/v1';
+const url = process.env.NODE_ENV != 'production' ? 'https://bege-api.onrender.com/api/v1' : 'http://localhost:5000/api/v1';
 exports.swaggerSpec = (0, swagger_jsdoc_1.default)({
     definition: {
         openapi: '3.0.0',

@@ -24,7 +24,7 @@ const requestPhoneVerification = async (phone) => {
     //const message = `🔐 Your verification code is: ${code}`
     console.log(`Your verification code is: ${code}`);
     //await sendSMS(phone, message)
-    return { phone, expiresAt };
+    return { phone, expiresAt, code };
 };
 exports.requestPhoneVerification = requestPhoneVerification;
 const verifyPhoneCode = async (phone, code) => {
@@ -34,7 +34,9 @@ const verifyPhoneCode = async (phone, code) => {
     (0, appAssert_1.default)(session.expiresAt > new Date(), 400, 'Code expired');
     session.verified = true;
     await session.save();
-    return { verified: true };
+    const user = await user_model_1.default.findOne({ phone });
+    (0, appAssert_1.default)(user, 401, 'Invalid credentials');
+    return { verified: true, tokens: issueTokens(user) };
 };
 exports.verifyPhoneCode = verifyPhoneCode;
 const isPhoneVerified = async (phone) => {

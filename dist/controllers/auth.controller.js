@@ -20,6 +20,7 @@ exports.requestPhoneCodeHandler = (0, catchErrors_1.default)(async (req, res) =>
         status: 'success',
         data: {
             phone: result.phone,
+            code: result.code,
             expiresAt: result.expiresAt,
             message: 'Verification code sent',
         },
@@ -31,7 +32,7 @@ exports.verifyPhoneCodeHandler = (0, catchErrors_1.default)(async (req, res) => 
     return res.status(200).json({
         status: 'success',
         message: 'Phone verified',
-        data: result,
+        tokens: result.tokens,
     });
 });
 exports.registerHandler = (0, catchErrors_1.default)(async (req, res) => {

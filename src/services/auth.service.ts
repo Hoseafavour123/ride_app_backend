@@ -74,7 +74,11 @@ export const verifyPhoneCode = async (phone: string, code: string) => {
   session.verified = true
   await session.save()
 
-  return { verified: true }
+  const user = await UserModel.findOne({ phone })
+
+  appAssert(user, 401, 'Invalid credentials')
+
+  return { verified:true, tokens: issueTokens(user)}
 }
 
 export const isPhoneVerified = async (phone: string) => {

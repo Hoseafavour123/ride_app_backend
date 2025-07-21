@@ -60,7 +60,7 @@ app.use("/api/v1/dashcam", (0, authenticate_1.authenticate)(audience_1.default.U
 app.use("/api/v1/sos", (0, authenticate_1.authenticate)(audience_1.default.User), sos_route_1.default);
 app.use("/api/v1/internal-alert", internal_alert_1.default);
 // review routes
-app.use("/api/v1/review", (0, authenticate_1.authenticate)(audience_1.default.User), review_route_1.default);
+app.use("/api/v1/reviews", (0, authenticate_1.authenticate)(audience_1.default.User), review_route_1.default);
 app.use(errorHandler_1.default);
 const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || "development";
