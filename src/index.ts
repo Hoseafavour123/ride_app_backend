@@ -19,6 +19,9 @@ import sosRoutes from "./routes/sos.route";
 import Audience from "./constants/audience";
 import internalAlertRoutes from "./routes/internal_alert";
 import reviewRoutes from "./routes/review.route";
+import categoryRoutes from "./routes/category.route";
+import productRoutes from "./routes/product.route"
+
 
 const app = express();
 
@@ -77,6 +80,17 @@ app.use("/api/v1/internal-alert", internalAlertRoutes)
 
 // review routes
 app.use("/api/v1/reviews", authenticate(Audience.User), reviewRoutes)
+
+
+
+// ============= ECOMMERCE =========================
+
+
+// categories routes
+app.use("/api/v1/categories", categoryRoutes);
+
+// product routes
+app.use('/api/v1/products', productRoutes)
 
 app.use(errorHandler);
 

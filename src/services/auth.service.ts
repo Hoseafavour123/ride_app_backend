@@ -74,11 +74,7 @@ export const verifyPhoneCode = async (phone: string, code: string) => {
   session.verified = true
   await session.save()
 
-  const user = await UserModel.findOne({ phone })
-
-  appAssert(user, 401, 'Invalid credentials')
-
-  return { verified:true, tokens: issueTokens(user)}
+  return { verified: true }
 }
 
 export const isPhoneVerified = async (phone: string) => {
@@ -137,6 +133,19 @@ export const loginUser = async ({
   appAssert(isValid, UNAUTHORIZED, 'Invalid credentials')
 
   return issueTokens(user, userAgent)
+}
+
+
+
+export const phoneLogin = async(phone: string) => {
+  const user = await UserModel.findOne({ phone })
+
+
+  console.log("User response", user)
+
+  appAssert(user, 401, 'Invalid credentials')
+
+  return issueTokens(user)
 }
 
 // ========== GOOGLE SIGN-IN ==========
@@ -277,11 +286,16 @@ const issueTokens = async (user: IUser, userAgent?: string) => {
     userId: user._id,
     sessionId: session._id,
     role: user.role,
-    aud: Audience.User,
+    aud: user.role == 'passenger' || user.role == 'driver' ? Audience.User : Audience.Admin,
   }
 
   const refreshToken = signToken(refreshPayload, defaultRefreshTokenOptions)
   const accessToken = signToken(accessPayload)
+
+  console.log(
+    `Issuing access token for role ${user.role} with aud ${accessPayload.aud}`
+  )
+
 
   return {
     user: user.omitPassword(),

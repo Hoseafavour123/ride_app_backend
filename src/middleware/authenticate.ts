@@ -15,7 +15,9 @@ export const authenticate = (audience: Audience) => {
 
     const token = authHeader.split(' ')[1]
 
+
     const { payload, error } = verifyToken(token, audience)
+
 
     if (error || !payload) {
       return res

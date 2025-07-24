@@ -7,7 +7,8 @@ import {
   loginWithGoogle,
   refreshUserAccessToken,
   requestPhoneVerification,
-  verifyPhoneCode
+  verifyPhoneCode,
+  phoneLogin
 } from '../services/auth.service'
 import appAssert from '../utils/appAssert'
 import {
@@ -18,6 +19,26 @@ import { verifyToken } from '../utils/jwt'
 import catchErrors from '../utils/catchErrors'
 import { loginSchema, registerSchema, googleAuthSchema, facebookAuthSchema, phoneRequestSchema, phoneVerifySchema } from './auth.schemas'
 import Audience from '../constants/audience'
+
+
+export const phoneLoginHandler = catchErrors(async (req, res) => {
+  const { phone } = req.body
+  
+  const { user, accessToken, refreshToken } = await phoneLogin(phone)
+  const useCookies = req.body.useCookies ?? false
+
+  // Set tokens nd respond with user data
+
+  setAuthTokens({ res, accessToken, refreshToken, useCookies })
+
+  return res.status(CREATED).json({
+    status: 'success',
+    data: {
+      user,
+    },
+  })
+
+})
 
 
 export const requestPhoneCodeHandler = catchErrors(async (req, res) => {
@@ -44,7 +65,6 @@ export const verifyPhoneCodeHandler = catchErrors(async (req, res) => {
   return res.status(200).json({
     status: 'success',
     message: 'Phone verified',
-    tokens: result.tokens,
   })
 })
 

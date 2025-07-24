@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import {
   loginHandler,
+  phoneLoginHandler,
   logoutHandler,
   refreshHandler,
   registerHandler,
@@ -15,6 +16,7 @@ import Audience from '../constants/audience'
 const authRoutes = Router()
 
 // prefix: /api/v1/auth
+authRoutes.post('/login/phone', phoneLoginHandler)
 
 /**
  * @swagger

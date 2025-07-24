@@ -5,6 +5,7 @@ export enum UserRole {
   PASSENGER = 'passenger',
   DRIVER = 'driver',
   ADMIN = 'admin',
+  VENDOR = 'vendor',
 }
 
 export interface IUser extends Document {
