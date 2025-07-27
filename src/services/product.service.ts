@@ -1,10 +1,12 @@
 import mongoose from 'mongoose'
-import { BAD_REQUEST } from '../constants/http'
+import { BAD_REQUEST, NOT_FOUND } from '../constants/http'
 import { CreateProductInput } from '../controllers/product.schema'
 import CategoryModel from '../models/category.model'
 import ProductModel from '../models/product.model'
 import appAssert from '../utils/appAssert'
 import { uploadImageBuffer } from '../utils/uploadToCloudinary'
+import productReviewModel from '../models/productReview.model'
+import cloudinary from '../config/cloudinary'
 
 export const createProduct = async (
   input: CreateProductInput,
@@ -107,8 +109,135 @@ export const searchProducts = async (query: any) => {
   }
 }
 
+
 export const getProductById = async (productId: string) => {
   const product = await ProductModel.findById(productId).populate('category')
   appAssert(product, 404, 'Product not found')
+
+  // Aggregate reviews
+  const [reviewStats] = await productReviewModel.aggregate([
+    { $match: { product: product._id } },
+    {
+      $group: {
+        _id: '$product',
+        avgRating: { $avg: '$rating' },
+        reviewCount: { $sum: 1 },
+      },
+    },
+  ])
+
+  // Fetch recent reviews (optional)
+  const recentReviews = await productReviewModel.find({ product: product._id })
+    .populate('user', 'name') // show reviewer name
+    .sort({ createdAt: -1 })
+    .limit(5)
+
+  return {
+    ...product.toObject(),
+    avgRating: reviewStats?.avgRating || 0,
+    reviewCount: reviewStats?.reviewCount || 0,
+    recentReviews,
+  }
+}
+
+
+export const updateProductService = async (productId: string, updates: any) => {
+  const product = await ProductModel.findById(productId)
+  appAssert(product, 404, 'Product not found')
+
+  Object.assign(product, updates)
+  await product.save()
   return product
+}
+
+
+export const deleteProductService = async (productId: string) => {
+  const product = await ProductModel.findById(productId)
+  appAssert(product,404, 'Product not found')
+
+  // Delete product images from Cloudinary
+  if (product.images && Array.isArray(product.images)) {
+    for (const img of product.images) {
+      if (img.public_id) {
+        await cloudinary.uploader.destroy(img.public_id)
+      }
+    }
+  }
+
+  await product.deleteOne()
+  return true
+}
+
+
+
+
+
+// ============= INVENTORY MGT ============
+export const updateProductStockService = async (
+  productId: string,
+  { quantity, action }: { quantity: number; action: 'INCREASE' | 'DECREASE' }
+) => {
+  const product = await ProductModel.findById(productId)
+  appAssert(product, NOT_FOUND, 'Product not found')
+
+  if (action === 'DECREASE') {
+    appAssert(
+      product.inStock >= quantity,
+      BAD_REQUEST,
+      'Insufficient stock to decrease'
+    )
+    product.inStock -= quantity
+  } else {
+    product.inStock += quantity
+  }
+
+  // Auto-toggle availability
+  product.isAvailable = product.inStock > 0
+
+  return product.save()
+}
+
+
+export const getInventoryOverviewService = async () => {
+  const totalProducts = await ProductModel.countDocuments()
+  const outOfStock = await ProductModel.countDocuments({ inStock: 0 })
+  const lowStock = await ProductModel.countDocuments({ inStock: { $lte: 5, $gt: 0 } })
+
+  const stockByCategory = await ProductModel.aggregate([
+    {
+      $group: {
+        _id: '$category',
+        totalStock: { $sum: '$inStock' },
+      },
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'category',
+      },
+    },
+    { $unwind: '$category' },
+    {
+      $project: {
+        _id: 0,
+        category: '$category.name',
+        totalStock: 1,
+      },
+    },
+  ])
+
+  const recentProducts = await ProductModel.find()
+    .sort({ createdAt: -1 })
+    .limit(10)
+    .select('name inStock category createdAt')
+
+  return {
+    totalProducts,
+    outOfStock,
+    lowStock,
+    stockByCategory,
+    recentProducts,
+  }
 }

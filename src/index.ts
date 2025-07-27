@@ -21,6 +21,8 @@ import internalAlertRoutes from "./routes/internal_alert";
 import reviewRoutes from "./routes/review.route";
 import categoryRoutes from "./routes/category.route";
 import productRoutes from "./routes/product.route"
+import cartRoutes from "./routes/cart.route"
+import orderRoutes from "./routes/order.route"
 
 
 const app = express();
@@ -91,6 +93,13 @@ app.use("/api/v1/categories", categoryRoutes);
 
 // product routes
 app.use('/api/v1/products', productRoutes)
+
+
+// cart
+app.use("/api/v1/cart", authenticate(Audience.User), cartRoutes)
+
+// order
+app.use("/api/v1/order", orderRoutes)
 
 app.use(errorHandler);
 

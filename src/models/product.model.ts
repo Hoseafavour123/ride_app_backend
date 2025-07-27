@@ -12,6 +12,16 @@ export interface ProductDocument extends Document {
   isAvailable: boolean
   createdAt: Date
   updatedAt: Date
+  lastStockUpdateBy?: mongoose.Types.ObjectId
+  lastStockUpdatedAt?: Date
+  lowStock: {
+    type: Boolean
+    default: false
+  }
+  lowStockThreshold: {
+    type: Number
+    default: 3
+  }
 }
 
 const productSchema = new Schema<ProductDocument>(
@@ -55,6 +65,21 @@ const productSchema = new Schema<ProductDocument>(
       type: Boolean,
       default: true,
     },
+    lastStockUpdateBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    lastStockUpdatedAt: {
+      type: Date,
+    },
+    lowStock: {
+      type: Boolean,
+      default: false,
+    },
+    lowStockThreshold: {
+      type: Number,
+      default: 3,
+    },
   },
   { timestamps: true }
 )
@@ -62,3 +87,4 @@ const productSchema = new Schema<ProductDocument>(
 const ProductModel = mongoose.model<ProductDocument>('Product', productSchema)
 
 export default ProductModel
+

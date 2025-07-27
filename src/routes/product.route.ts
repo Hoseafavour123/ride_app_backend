@@ -1,9 +1,15 @@
 import { Router } from 'express'
 import {
+  addProductImageHandler,
   createProductHandler,
+  deleteProductHandler,
+  deleteProductImageHandler,
   getAllProductsHandler,
+  getInventoryOverview,
   getProductByIdHandler,
   searchProductsHandler,
+  updateProductHandler,
+  updateStockHandler,
 
 } from '../controllers/product.controller'
 import upload from '../utils/multer'
@@ -13,6 +19,79 @@ import Audience from '../constants/audience'
 const router = Router()
 
 // prefix: /api/v1/products
+
+
+
+
+
+
+/**
+ * @swagger
+ * /api/v1/products/inventory-overview:
+ *   get:
+ *     summary: Get an overview of product inventory
+ *     description: Returns an overview including total inventory.
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Inventory overview retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 totalProducts:
+ *                   type: integer
+ *                   example: 120
+ *                 outOfStock:
+ *                   type: integer
+ *                   example: 8
+ *                 lowStock:
+ *                   type: integer
+ *                   example: 15
+ *                 stockByCategory:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       category:
+ *                         type: string
+ *                         example: Electronics
+ *                       totalStock:
+ *                         type: integer
+ *                         example: 42
+ *                 recentProducts:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                         example: Wireless Mouse
+ *                       inStock:
+ *                         type: integer
+ *                         example: 20
+ *                       category:
+ *                         type: string
+ *                         example: Electronics
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: 2025-07-26T12:34:56.789Z
+ *       401:
+ *         description: Unauthorized - Admin token required
+ *       500:
+ *         description: Server error
+ */
+router.get(
+  '/inventory-overview',
+  authenticate(Audience.Admin),
+  getInventoryOverview
+)
+
+
 
 
 /**
@@ -171,5 +250,209 @@ router.get('/search', searchProductsHandler)
  *         description: Invalid product ID
  */
 router.get('/:productId', getProductByIdHandler)
+
+
+/**
+ * @swagger
+ * /api/v1/products/{productId}:
+ *   put:
+ *     summary: Update a product by ID
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the product to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: T-Shirt
+ *               description:
+ *                 type: string
+ *                 example: A soft cotton t-shirt
+ *               price:
+ *                 type: number
+ *                 example: 19.99
+ *               inStock:
+ *                 type: number
+ *                 example: 100
+ *               discountPrice:
+ *                type: number
+ *                example: 15.99
+ *     responses:
+ *       200:
+ *         description: Product updated successfully
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Product not found
+ */
+router.put('/:productId', authenticate(Audience.Admin), updateProductHandler)
+
+
+/**
+ * @swagger
+ * /api/v1/products/{productId}/images:
+ *   post:
+ *     summary: Upload an image to a product
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the product to add an image to
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Image uploaded successfully
+ *       400:
+ *         description: Image missing or maximum image limit exceeded
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Product not found
+ */
+router.post('/:productId/images', authenticate(Audience.Admin), upload.single('image'), addProductImageHandler)
+
+
+
+
+/**
+ * @swagger
+ * /api/v1/products/{productId}/images/{imageId}:
+ *   delete:
+ *     summary: Delete an image from a product
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the product
+ *       - in: path
+ *         name: imageId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The public_id of the image to delete
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               imageId:
+ *                 type: string
+ *                 example: products/image123
+ *     responses:
+ *       200:
+ *         description: Image deleted successfully
+ *       400:
+ *         description: Invalid image ID or request body
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Product not found
+ */
+router.delete('/:productId/images', authenticate(Audience.Admin), deleteProductImageHandler)
+
+
+/**
+ * @swagger
+ * /api/v1/products/{productId}:
+ *   delete:
+ *     summary: Delete a product by ID
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the product to delete
+ *     responses:
+ *       200:
+ *         description: Product deleted successfully
+ *       400:
+ *         description: Invalid product ID
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Product not found
+ */
+router.delete('/:productId', authenticate(Audience.Admin), deleteProductHandler)
+
+/**
+ * @swagger
+ * /api/v1/products/{productId}/stock:
+ *   put:
+ *     summary: Update product stock
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the product to update stock for
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               quantity:
+ *                 type: integer
+ *                 example: 50
+ *               action:
+ *                 type: string
+ *                 enum: [INCREASE, DECREASE]
+ *                 example: INCREASE
+ *     responses:
+ *       200:
+ *         description: Stock updated successfully
+ *       400:
+ *         description: Invalid input or insufficient stock to decrease
+ */
+router.put('/:productId/stock', updateStockHandler)
+
+
+
 
 export default router
