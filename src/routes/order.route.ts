@@ -16,7 +16,7 @@ const router = Router()
 
 /**
  * @swagger
- * /api/v1/order:
+ * /order:
  *   post:
  *     summary: Create a new order
  *     tags: [Orders]
@@ -47,7 +47,7 @@ router.post('/', authenticate(Audience.User), createOrderHandler)
 
 /**
  * @swagger
- * /api/v1/order/my-orders:
+ * /order/my-orders:
  *   get:
  *     summary: Get current user's orders
  *     tags: [Orders]
@@ -63,7 +63,7 @@ router.get('/my-orders', authenticate(Audience.User), getUserOrdersHandler)
 
 /**
  * @swagger
- * /api/v1/order/{orderId}/status:
+ * /order/{orderId}/status:
  *   patch:
  *     summary: Update order status
  *     tags: [Orders]
@@ -102,7 +102,7 @@ router.put('/:orderId/status', authenticate(Audience.User), updateOrderStatusHan
 
 /**
  * @swagger
- * /api/v1/order/admin:
+ * /order/admin:
  *   get:
  *     summary: Get all orders (admin only)
  *     tags: [Orders]
@@ -161,7 +161,7 @@ router.get('/admin', authenticate(Audience.Admin), getAllOrdersHandler)
 
 /**
  * @swagger
- * /api/v1/orders/filter:
+ * /order/filter:
  *   get:
  *     summary: Get filtered orders
  *     description: Retrieves a paginated list of orders filtered by status, date range, and user email.

@@ -27,7 +27,7 @@ const router = Router()
 
 /**
  * @swagger
- * /api/v1/products/inventory-overview:
+ * /products/inventory-overview:
  *   get:
  *     summary: Get an overview of product inventory
  *     description: Returns an overview including total inventory.
@@ -96,7 +96,7 @@ router.get(
 
 /**
  * @swagger
- * /api/v1/products:
+ * /products:
  *   post:
  *     summary: Create a new product
  *     tags: [Products]
@@ -151,7 +151,7 @@ router.post('/', authenticate(Audience.Admin), upload.array('images'), createPro
 
 /**
  * @swagger
- * /api/v1/products:
+ * /products:
  *   get:
  *     summary: Get all products
  *     tags: [Products]
@@ -164,7 +164,7 @@ router.get('/', getAllProductsHandler)
 
 /**
  * @swagger
- * /api/v1/products/search:
+ * /products/search:
  *   get:
  *     summary: Search and filter products
  *     tags: [Products]
@@ -230,7 +230,7 @@ router.get('/search', searchProductsHandler)
 
 /**
  * @swagger
- * /api/v1/products/{productId}:
+ * /products/{productId}:
  *   get:
  *     summary: Get a single product by ID
  *     tags: [Products]
@@ -254,7 +254,7 @@ router.get('/:productId', getProductByIdHandler)
 
 /**
  * @swagger
- * /api/v1/products/{productId}:
+ * /products/{productId}:
  *   put:
  *     summary: Update a product by ID
  *     tags: [Products]
@@ -304,7 +304,7 @@ router.put('/:productId', authenticate(Audience.Admin), updateProductHandler)
 
 /**
  * @swagger
- * /api/v1/products/{productId}/images:
+ * /products/{productId}/images:
  *   post:
  *     summary: Upload an image to a product
  *     tags: [Products]
@@ -346,7 +346,7 @@ router.post('/:productId/images', authenticate(Audience.Admin), upload.single('i
 
 /**
  * @swagger
- * /api/v1/products/{productId}/images/{imageId}:
+ * /products/{productId}/images/{imageId}:
  *   delete:
  *     summary: Delete an image from a product
  *     tags: [Products]
@@ -390,7 +390,7 @@ router.delete('/:productId/images', authenticate(Audience.Admin), deleteProductI
 
 /**
  * @swagger
- * /api/v1/products/{productId}:
+ * /products/{productId}:
  *   delete:
  *     summary: Delete a product by ID
  *     tags: [Products]
@@ -417,7 +417,7 @@ router.delete('/:productId', authenticate(Audience.Admin), deleteProductHandler)
 
 /**
  * @swagger
- * /api/v1/products/{productId}/stock:
+ * /products/{productId}/stock:
  *   put:
  *     summary: Update product stock
  *     tags: [Products]

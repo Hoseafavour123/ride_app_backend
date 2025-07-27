@@ -16,7 +16,7 @@ const router = Router()
 
 /**
  * @swagger
- * /api/v1/categories:
+ * /categories:
  *   post:
  *     summary: Create a new category
  *     tags: [Categories]
@@ -50,7 +50,7 @@ router.post('/', authenticate(Audience.Admin), createCategoryHandler) // Admin o
 
 /**
  * @swagger
- * /api/v1/categories:
+ * /categories:
  *   get:
  *     summary: Get all categories
  *     tags: [Categories]
@@ -63,7 +63,7 @@ router.get('/',  getCategoriesHandler)
 
 /**
  * @swagger
- * /api/v1/categories/{id}:
+ * /categories/{id}:
  *   get:
  *     summary: Get a category by ID
  *     tags: [Categories]
@@ -85,7 +85,7 @@ router.get('/:id', getCategoryByIdHandler)
 
 /**
  * @swagger
- * /api/v1/categories/{id}:
+ * /categories/{id}:
  *   put:
  *     summary: Update a category by ID
  *     tags: [Categories]
@@ -128,7 +128,7 @@ router.put('/:id', authenticate(Audience.Admin), updateCategoryHandler) // Admin
 
 /**
  * @swagger
- * /api/v1/categories/{id}:
+ * /categories/{id}:
  *   delete:
  *     summary: Delete a category by ID
  *     tags: [Categories]

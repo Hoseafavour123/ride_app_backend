@@ -13,7 +13,7 @@ const router = Router()
 
 /**
  * @swagger
- * /api/v1/cart:
+ * /cart:
  *   get:
  *     summary: Get the authenticated user's cart
  *     tags: [Cart]
@@ -30,7 +30,7 @@ router.get('/', getCartHandler)
 
 /**
  * @swagger
- * /api/v1/cart:
+ * /cart:
  *   post:
  *     summary: Add an item to the cart
  *     tags: [Cart]
@@ -65,7 +65,7 @@ router.post('/', addToCartHandler)
 
 /**
  * @swagger
- * /api/v1/cart/{productId}:
+ * /cart/{productId}:
  *   put:
  *     summary: Update quantity of an item in the cart
  *     tags: [Cart]
@@ -106,7 +106,7 @@ router.put('/:productId', updateCartItemHandler)
 
 /**
  * @swagger
- * /api/v1/cart/{productId}:
+ * /cart/{productId}:
  *   delete:
  *     summary: Remove a specific item from the cart
  *     tags: [Cart]
@@ -134,7 +134,7 @@ router.delete('/:productId', removeCartItemHandler)
 
 /**
  * @swagger
- * /api/v1/cart:
+ * /cart:
  *   delete:
  *     summary: Clear all items from the cart
  *     tags: [Cart]
